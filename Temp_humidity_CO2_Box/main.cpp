@@ -17,8 +17,8 @@
 GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> display;
 GyverBME280 bme;
 MHZ19_uart mhz19;
-Button btn_down(6);
-Button btn_right(8);
+Button btn_next_screen(6);
+Button btn_update(8);
 
 const int rx_pin = 2; //BUT "REAL" WIRE FROM RX CONNECTED TO PIN 3!!!
 const int tx_pin = 3; //BUT "REAL" WIRE FROM T CONNECTED TO PIN 2!!!
@@ -61,7 +61,7 @@ void setup()
   display.print("initializing...");
   display.update();
   initHistoryBuffers();
-  delay(1000);
+  delay(180000); // 3 min to warm up MZ-19b
   display.clear();
   readTempAndHumInside();
   readCO2();
@@ -87,20 +87,20 @@ void loop()
   uint32_t now = millis();
 
   // Handle button inputs
-  btn_down.tick();
-  if (btn_down.click())
+  btn_next_screen.tick();
+  if (btn_next_screen.click())
     changeScreen();
 
-  btn_right.tick();
-  if (btn_right.click()) {
+  btn_update.tick();
+  if (btn_update.click()) {
     switch (current_screen)
     {
     case 5:
-      //CO2genRandomValue(); //to debug
+      //CO2genRandomValue(); //for debug
       drawHistoryGraph(getCO2_HoursAgo, 2000, 400);
       break;
     case 6:
-      //TempInGenRandomValue(); //to debug
+      //TempInGenRandomValue(); //for debug
       drawHistoryGraph(getTempIn_HoursAgo, 30, -10);  
       break;
     }

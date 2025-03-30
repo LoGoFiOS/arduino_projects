@@ -51,14 +51,14 @@ inline void setMainScreen()
   display_font_size = 3;
   display.setScale(display_font_size);
   display.setCursorXY(CURSOR_X(0), CURSOR_Y(0));
-  display.print("16:07");
+  display.print("13:59");
 
   display_font_size = 1;
   display.setScale(display_font_size);
   display.setCursorXY(CURSOR_X(16), CURSOR_Y(0));
-  display.print("22.03");
+  display.print("30.03");
   display.setCursorXY(CURSOR_X(16), CURSOR_Y(2) - 2);
-  display.print("Sat");
+  display.print("Sun");
   display.setCursorXY(CURSOR_X(1), CURSOR_Y(4));
 
   display.print("In     ");
@@ -74,10 +74,10 @@ inline void setMainScreen()
   display.update();
 
   display.setCursorXY(CURSOR_X(1), CURSOR_Y(6) + 8);
-  display.print("Out +15");
+  display.print("Out +14");
   display.print((char)127);
   display.print("C");
-  display.print(", 2 m/s");
+  display.print(", 3 m/s");
 
   display.update();
   displayUpdCurrentT(cur_t);
