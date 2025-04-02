@@ -7,6 +7,7 @@
 #include "weather_codes.h"
 #include "forecast_data.h"
 #include "history_data.h"
+#include <GRGB.h>
 
 // Display related constants and macros
 #define CURSOR_X(col) (col * display_font_w * display_font_size) // get first left-top X coor of col, pixels 0 - 127!!!
@@ -14,6 +15,7 @@
 
 // Display settings
 extern GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> display;
+extern GRGB led;
 extern uint8_t current_screen;
 extern uint8_t display_font_size;
 const uint8_t display_font_w = 6;
@@ -27,6 +29,7 @@ extern bool is_display_blinked;
 
 extern const uint8_t HIST_DATA_BUFFER_SIZE;
 
+void setRGBColor();
 // Function declarations for display handling
 void changeScreen();
 
@@ -43,7 +46,33 @@ void setWeatherForecastScreen(int8_t forecast_id);
 void setCO2histScreen();
 void setTempInHistScreen();
 void setHumInHistScreen();
-// void testSetCO2();
+
+// uint8_t current_index = 0; // for RGB debug
+// int16_t co2_levels[4] = {400, 800, 1200, 1800}; // for RGB debug
+inline void setRGBColor(uint8_t h, uint8_t s, uint8_t v){
+  led.setHSV(h, s, v);
+
+  // int16_t co2 = co2_levels[current_index]; // for RGB debug
+  // if (co2 == 400) {
+  //   //led.setColor(GGreen);
+  //   led.setHSV(85, 255, 200);
+  //   Serial.println("GGreen");
+  // } else if (co2 == 800)  {
+  //   //led.setColor(GYellow);
+  //   led.setHSV(45, 255, 200);
+  //   Serial.println("GYellow");
+  // } else if (co2 == 1200) {
+  //   led.setHSV(20, 255, 200);
+  //   //led.setColor(GOrange);
+  //   Serial.println("GOrange");
+  // } else if (co2 == 1800) {
+  //   //led.setColor(GRed);
+  //   led.setHSV(0, 255, 200);
+  //   Serial.println("GRed");
+  // } else {
+  // }
+  // current_index = (current_index + 1) % 4; // for RGB debug
+}
 
 // Set main screen with clock, date, and current conditions
 inline void setMainScreen()
@@ -153,12 +182,16 @@ inline void displayUpdCurrentCO2(int16_t cur_co2)
   display.print("ppm: ");
   if (cur_co2 >= 400 && cur_co2 < 800) {
     display.print("good");
+    setRGBColor(85, 255, 200);
   } else if (cur_co2 >= 800 && cur_co2 < 1200) {
     display.print("fair");
+    setRGBColor(45, 255, 200);
   } else if (cur_co2 >= 1200 && cur_co2 < 1800) {
     display.print("poor");
+    setRGBColor(20, 255, 200);
   } else if (cur_co2 >= 1800 && cur_co2 < 2200) {
     display.print("dang");
+    setRGBColor(0, 255, 200);
   } else {
     display.print("????");
   }
@@ -334,13 +367,3 @@ inline void setHumInHistScreen()
 
 
 #endif // DISPLAY_HELPER_H
-
-// void testSetCO2()
-// {
-//   display.setCursorXY(CURSOR_X(0), CURSOR_Y(7));
-//   display.print("CO2: ");
-//   display.print(cur_co2ppm);
-//   display.update(); 
-//   Serial.print("co2: ");
-//   Serial.println(cur_co2ppm);
-// }

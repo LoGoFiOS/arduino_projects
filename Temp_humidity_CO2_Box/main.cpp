@@ -10,18 +10,24 @@
 #include <Arduino.h>
 #include "weather_station.h"
 #include <GyverOLED.h>
+#include <GRGB.h>
 
-#define SCL A5
-#define SDA A4
+#define SCL A5 // for BME280 and display
+#define SDA A4 // for BME280 and display
+#define R_PIN 9 // for RGB led
+#define G_PIN 10 // for RGB led
+#define B_PIN 11 // for RGB led
+#define RX_PIN 2 // BUT "REAL" WIRE FROM RX CONNECTED TO PIN 3!!!
+#define TX_PIN 3 // BUT "REAL" WIRE FROM T CONNECTED TO PIN 2!!!
+#define BTN_NEXT_SCREEN_PIN 4 // btn_next_screen
+#define BTN_UPDATE_PIN 5 // btn_update
 
+GRGB led(COMMON_CATHODE, R_PIN, G_PIN, B_PIN);
 GyverOLED<SSD1306_128x64, OLED_NO_BUFFER> display;
 GyverBME280 bme;
 MHZ19_uart mhz19;
-Button btn_next_screen(6);
-Button btn_update(8);
-
-const int rx_pin = 2; //BUT "REAL" WIRE FROM RX CONNECTED TO PIN 3!!!
-const int tx_pin = 3; //BUT "REAL" WIRE FROM T CONNECTED TO PIN 2!!!
+Button btn_next_screen(BTN_NEXT_SCREEN_PIN);
+Button btn_update(BTN_UPDATE_PIN);
 
 // Timers initialization
 uint32_t last_sensor_read_time = 0;
@@ -31,7 +37,7 @@ const uint32_t SENSOR_READ_INTERVAL = 1800000; // every half hour
 
 // display
 uint8_t current_screen = 0; // can be changed for screen debug
-uint8_t display_font_size = 1; // don't change
+uint8_t display_font_size = 1; // don't change!
 
 void setup()
 {
@@ -48,8 +54,11 @@ void setup()
   Serial.begin(9600);
   if (!bme.begin(0x76))
     Serial.println("BME280 Error!");
-  mhz19.begin(rx_pin, tx_pin);
+  mhz19.begin(RX_PIN, TX_PIN);
   mhz19.setAutoCalibration(false);
+  led.setCRT(true);
+  led.setBrightness(210);
+  led.setHSV(200, 200, 200);
   delay(500);
 
   display.init();
@@ -59,6 +68,12 @@ void setup()
   display.setScale(display_font_size);
   display.setCursorXY(CURSOR_X(0), CURSOR_Y(0));
   display.print("initializing...");
+  display.setCursorXY(CURSOR_X(0), CURSOR_Y(2));
+  display.print("Wait for 3 min.");
+  display.setCursorXY(CURSOR_X(0), CURSOR_Y(3));
+  display.print("CO2 sensor must");
+  display.setCursorXY(CURSOR_X(0), CURSOR_Y(4));
+  display.print("warm up...");
   display.update();
   initHistoryBuffers();
   delay(180000); // 3 min to warm up MZ-19b
@@ -104,6 +119,7 @@ void loop()
       drawHistoryGraph(getTempIn_HoursAgo, 30, -10);  
       break;
     }
+    // setRGBColor(200, 200, 200); //for RGB debug
   }
 
   // Blink time colon on main screen
