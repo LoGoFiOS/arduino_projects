@@ -18,7 +18,7 @@
 #define G_PIN 10 // for RGB led
 #define B_PIN 11 // for RGB led
 #define RX_PIN 2 // BUT "REAL" WIRE FROM RX CONNECTED TO PIN 3!!!
-#define TX_PIN 3 // BUT "REAL" WIRE FROM T CONNECTED TO PIN 2!!!
+#define TX_PIN 3 // BUT "REAL" WIRE FROM TX CONNECTED TO PIN 2!!!
 #define BTN_NEXT_SCREEN_PIN 4 // btn_next_screen
 #define BTN_UPDATE_PIN 5 // btn_update
 
